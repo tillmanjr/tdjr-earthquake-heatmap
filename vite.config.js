@@ -12,6 +12,7 @@ export default defineConfig(({mode}) => {
         '@vis.gl/react-google-maps/examples.js':
           'https://visgl.github.io/react-google-maps/scripts/examples.js'
       }
-    }
+    },
+    publicDir: true
   };
 });
