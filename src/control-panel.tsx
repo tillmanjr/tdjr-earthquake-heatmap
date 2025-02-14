@@ -1,9 +1,43 @@
 import * as React from 'react';
+import {useState} from 'react';
+
 import DateTimePicker from 'react-datetime-picker';
 
 import 'react-datetime-picker/dist/DateTimePicker.css';
 import 'react-calendar/dist/Calendar.css';
 import 'react-clock/dist/Clock.css';
+
+function Dropdown({ options, onSelect }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedValue, setSelectedValue] = useState(null);
+
+  const handleToggle = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const handleOptionClick = (option) => {
+    setSelectedValue(option);
+    onSelect(option);
+    setIsOpen(false);
+  };
+
+  return (
+    <div className="dropdown">
+      <button onClick={handleToggle}>
+        {selectedValue || 'Select an option'}
+      </button>
+      {isOpen && (
+        <ul className="dropdown-menu">
+          {options.map((option) => (
+            <li key={option} onClick={() => handleOptionClick(option)}>
+              {option}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
 
 type Props = {
   radius: number;
@@ -14,6 +48,10 @@ type Props = {
   depthMax: number;
   intensityMin: number;
   intensityMax: number;
+  automationStatus: string;
+  automationType: string;
+  automationStepBy: number;
+  automationWindow: number;
   inputError: string;
   onRadiusChanged: (radius: number) => void;
   onOpacityChanged: (opacity: number) => void;
@@ -23,6 +61,11 @@ type Props = {
   handleDepthMaxChange: (depthMax: number) => void;
   handleIntensityMinChange: (intensityMin: number) => void;
   handleIntensityMaxChange: (intensityMin: number) => void;
+  handleToggleAutomation: () => void;
+
+  onAutomationTypeChange: (automationType: string) => void;
+  onAutomationStepByChange: (automationStepBy: number) => void;
+  onAutomationWindowChange: (automationWindow: number) => void;
 };
 2
 function ControlPanel({
@@ -34,6 +77,10 @@ function ControlPanel({
   depthMax,
   intensityMin,
   intensityMax,
+  automationStatus,
+  automationType,
+  automationStepBy,
+  automationWindow,
   inputError,
   onRadiusChanged,
   onOpacityChanged,
@@ -42,8 +89,13 @@ function ControlPanel({
   handleDepthMinChange,
   handleDepthMaxChange,
   handleIntensityMinChange,
-  handleIntensityMaxChange
+  handleIntensityMaxChange,
+  handleToggleAutomation,
+  onAutomationTypeChange,
+  onAutomationStepByChange,
+  onAutomationWindowChange
 }: Props) {
+  const automationTypes = ['interval', 'accumulation']
   return (
     <div className="control-panel" style={{width: "300px"}}>
       <span style={{width: '100%', fontSize: 'larger', display: 'inline-block', textAlign: 'center'}}>USGS Earthquake Data</span><br />
@@ -205,9 +257,70 @@ function ControlPanel({
               maxDate={new Date('2025-01-01T00:00:00')}
           />
         </div>
-            
-           
-
+        <div style={{
+            paddingTop: '10px'}}>
+          <b>Animation</b>
+        </div>
+        
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              paddingLeft: '5px'
+            }}>
+            <label htmlFor="automationStepBy">Days per Step:</label>
+            <input
+              type="number"
+              value={automationStepBy}
+              onChange={e => onAutomationStepByChange(Number(e.target.value))}
+              min={1}
+              max={30}
+              step={1}
+            /> 
+            </div>
+            <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              paddingLeft: '5px'
+            }}>
+            <label htmlFor="automationStepBy">Days displayed:</label>
+            <input
+              type="number"
+              value={automationWindow}
+              onChange={e => onAutomationWindowChange(Number(e.target.value))}
+              min={1}
+              max={30}
+              step={1}
+            />
+            </div>
+            <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              paddingLeft: '5px'
+            }}>
+            <label htmlFor="automationTypes">Automation Type:</label>
+            <Dropdown options={automationTypes} onSelect={onAutomationTypeChange} />
+            </div>
+            <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            paddingLeft: '5px',
+            paddingTop: '5px'
+          }}>
+            <button
+              value="toggle"
+              onClick={handleToggleAutomation}
+            >{automationStatus === 'running' ? 'Stop Animation' : 'Start Animation'}</button>
+          </div>
+          <div>
+            <ul>
+              <li>Don't make any changes while animation is running.</li>
+              <li>Set Max Date to an early date before starting animation.<br /><em>Necessary for accumulations</em></li>
+            </ul>
+            </div>
 
         <div style={{color:"red"}}>
           {inputError && <p style={{ color: 'red' }}>{inputError}</p>}
