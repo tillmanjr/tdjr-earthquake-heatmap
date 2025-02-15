@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 
-export default function Dropdown({ options, onSelect, value }) {
+function Dropdown({ options, onSelect, value }) {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedValue, setSelectedValue] = useState(value || null);
   
@@ -31,3 +31,5 @@ export default function Dropdown({ options, onSelect, value }) {
       </div>
     );
   }
+
+  export default Dropdown
