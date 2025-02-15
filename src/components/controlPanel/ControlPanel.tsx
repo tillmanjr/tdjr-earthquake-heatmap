@@ -1,5 +1,4 @@
 import * as React from 'react';
-import {useState} from 'react';
 
 import DateTimePicker from 'react-datetime-picker';
 
@@ -7,37 +6,7 @@ import 'react-datetime-picker/dist/DateTimePicker.css';
 import 'react-calendar/dist/Calendar.css';
 import 'react-clock/dist/Clock.css';
 
-function Dropdown({ options, onSelect }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedValue, setSelectedValue] = useState(null);
-
-  const handleToggle = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const handleOptionClick = (option) => {
-    setSelectedValue(option);
-    onSelect(option);
-    setIsOpen(false);
-  };
-
-  return (
-    <div className="dropdown">
-      <button onClick={handleToggle}>
-        {selectedValue || 'Select an option'}
-      </button>
-      {isOpen && (
-        <ul className="dropdown-menu">
-          {options.map((option) => (
-            <li key={option} onClick={() => handleOptionClick(option)}>
-              {option}
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
-}
+import Dropdown from '../dropDown/Dropdown'
 
 type Props = {
   radius: number;
@@ -62,12 +31,11 @@ type Props = {
   handleIntensityMinChange: (intensityMin: number) => void;
   handleIntensityMaxChange: (intensityMin: number) => void;
   handleToggleAutomation: () => void;
-
   onAutomationTypeChange: (automationType: string) => void;
   onAutomationStepByChange: (automationStepBy: number) => void;
   onAutomationWindowChange: (automationWindow: number) => void;
 };
-2
+
 function ControlPanel({
   radius,
   opacity,
@@ -301,7 +269,7 @@ function ControlPanel({
               paddingLeft: '5px'
             }}>
             <label htmlFor="automationTypes">Automation Type:</label>
-            <Dropdown options={automationTypes} onSelect={onAutomationTypeChange} />
+            <Dropdown options={automationTypes} onSelect={onAutomationTypeChange} value={automationType} />
             </div>
             <div
           style={{
