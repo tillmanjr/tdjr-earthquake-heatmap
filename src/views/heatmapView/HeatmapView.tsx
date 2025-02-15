@@ -147,8 +147,8 @@ export function HeatmapView() {
         showNextAccumulation(1);
       }
     
-      const API_KEY = process.env.VITE_GOOGLE_MAPS_API_KEY
-      const MAP_ID = process.env.VITE_GOOGLE_MAPS_MAP_ID
+      const API_KEY = "AIzaSyByVwAy15t8c4VoLJ-ZK1qBlPxh-I0_NUQ" // process.env.VITE_GOOGLE_MAPS_API_KEY
+      const MAP_ID = "7a9e2ebecd32a903" // process.env.VITE_GOOGLE_MAPS_MAP_ID
 
       return (
         <APIProvider apiKey={API_KEY}>
