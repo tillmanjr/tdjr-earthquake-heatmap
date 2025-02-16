@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {useState} from 'react';
 
 import DateTimePicker from 'react-datetime-picker';
 
@@ -6,7 +7,37 @@ import 'react-datetime-picker/dist/DateTimePicker.css';
 import 'react-calendar/dist/Calendar.css';
 import 'react-clock/dist/Clock.css';
 
-import {Dropdown} from '../../components'
+const Dropdown = ({ options, onSelect, value }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [selectedValue, setSelectedValue] = useState(value || null);
+  
+    const handleToggle = () => {
+      setIsOpen(!isOpen);
+    };
+  
+    const handleOptionClick = (option) => {
+      setSelectedValue(option);
+      onSelect(option);
+      setIsOpen(false);
+    };
+  
+    return (
+      <div className="dropdown">
+        <button onClick={handleToggle}>
+          {selectedValue || 'Select an option'}
+        </button>
+        {isOpen && (
+          <ul className="dropdown-menu">
+            {options.map((option) => (
+              <li key={option} onClick={() => handleOptionClick(option)}>
+                {option}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    );
+  }
 
 type Props = {
   radius: number;
@@ -36,7 +67,7 @@ type Props = {
   onAutomationWindowChange: (automationWindow: number) => void;
 };
 
-function ControlPanel({
+const ControlPanel = ({
   radius,
   opacity,
   dateMin,
@@ -62,7 +93,7 @@ function ControlPanel({
   onAutomationTypeChange,
   onAutomationStepByChange,
   onAutomationWindowChange
-}: Props) {
+}: Props) => {
   const automationTypes = ['interval', 'accumulation']
   return (
     <div className="control-panel" style={{width: "320px", color: "black", alignSelf: "flex-end", bottom: "20px"}}>
