@@ -6,7 +6,7 @@ import 'react-datetime-picker/dist/DateTimePicker.css';
 import 'react-calendar/dist/Calendar.css';
 import 'react-clock/dist/Clock.css';
 
-import Dropdown from '../dropDown/Dropdown'
+import {Dropdown} from '../../components'
 
 type Props = {
   radius: number;
@@ -24,8 +24,8 @@ type Props = {
   inputError: string;
   onRadiusChanged: (radius: number) => void;
   onOpacityChanged: (opacity: number) => void;
-  handleDateMinChange: (dateMin: Date | null) => void;
-  handleDateMaxChange: (dateMax: Date | null) => void;
+  handleDateMinChange: (dateMin: Date|null) => void;
+  handleDateMaxChange: (dateMax: Date|null) => void;
   handleDepthMinChange: (depthMin: number) => void;
   handleDepthMaxChange: (depthMax: number) => void;
   handleIntensityMinChange: (intensityMin: number) => void;
@@ -65,7 +65,7 @@ function ControlPanel({
 }: Props) {
   const automationTypes = ['interval', 'accumulation']
   return (
-    <div className="control-panel" style={{width: "300px"}}>
+    <div className="control-panel" style={{width: "320px", color: "black", alignSelf: "flex-end", bottom: "20px"}}>
       <span style={{width: '100%', fontSize: 'larger', display: 'inline-block', textAlign: 'center'}}>USGS Earthquake Data</span><br />
       <span style={{width: '40%', display: 'inline-block', textAlign: 'right'}}>2019-2024&nbsp;</span>
       <span style={{width: '60%', display: 'inline-block', textAlign: 'left'}}><em>&nbsp;11,596 earthquakes</em></span>

@@ -5,9 +5,9 @@ import {HeatmapView} from './views/heatmapView/HeatmapView';
 
 const App = () => {
   return (
-  <div>
-    <HeatmapView />
-  </div>
+    <div>
+      <HeatmapView />
+    </div>
   )
 }
 

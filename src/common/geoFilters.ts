@@ -4,7 +4,7 @@ import {
     EarthquakeFilterProps
 } from './types'
 
-export function applyFilter(geoJson: EarthquakesGeojson, earthquakeFilterProps: EarthquakeFilterProps) {  // : Promise<EarthquakesGeojson> {
+export function applyFilter(geoJson: EarthquakesGeojson|undefined, earthquakeFilterProps: EarthquakeFilterProps) {  // : Promise<EarthquakesGeojson> {
     if (geoJson === undefined) {
         console.log('applyFilters: geoJson: undefined')
         return undefined
