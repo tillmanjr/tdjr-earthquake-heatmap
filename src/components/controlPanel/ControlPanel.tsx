@@ -7,6 +7,8 @@ import 'react-datetime-picker/dist/DateTimePicker.css';
 import 'react-calendar/dist/Calendar.css';
 import 'react-clock/dist/Clock.css';
 
+import {StyledControlPanel} from './ControlPanel.styled'
+
 const Dropdown = ({ options, onSelect, value }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedValue, setSelectedValue] = useState(value || null);
@@ -96,7 +98,8 @@ const ControlPanel = ({
 }: Props) => {
   const automationTypes = ['interval', 'accumulation']
   return (
-    <div className="control-panel" style={{width: "320px", color: "black", alignSelf: "flex-end", bottom: "20px"}}>
+    // <div className="control-panel" style={{width: "320px", color: "black", alignSelf: "flex-end", bottom: "20px"}}>
+    <StyledControlPanel>
       <span style={{width: '100%', fontSize: 'larger', display: 'inline-block', textAlign: 'center'}}>USGS Earthquake Data</span><br />
       <span style={{width: '40%', display: 'inline-block', textAlign: 'right'}}>2019-2024&nbsp;</span>
       <span style={{width: '60%', display: 'inline-block', textAlign: 'left'}}><em>&nbsp;11,596 earthquakes</em></span>
@@ -326,7 +329,7 @@ const ControlPanel = ({
         </div>
 
       </div>
-    </div>
+    </StyledControlPanel>
   );
 }
 
