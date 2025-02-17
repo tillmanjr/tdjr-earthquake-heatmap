@@ -104,17 +104,17 @@ const ControlPanel = ({
       <span style={{width: '40%', display: 'inline-block', textAlign: 'right'}}>2019-2024&nbsp;</span>
       <span style={{width: '60%', display: 'inline-block', textAlign: 'left'}}><em>&nbsp;11,596 earthquakes</em></span>
       <p style={{paddingLeft: '5px'}} >
-        <b>Minimum cutoffs:</b> <br />
+        <span  className='control-panel-section-heading'>Minimum cutoffs:</span> <br />
         <span style={{paddingLeft: '10px', fontSize: 'smaller'}}>Intensity 2.5</span><br />
         <span style={{paddingLeft: '10px', fontSize: 'smaller'}}>Depth: 5.6 km</span><br />
-        <b>Geographic boundaries:</b> <br />
+        <span className='control-panel-section-heading'>Geographic boundaries:</span> <br />
         <span style={{paddingLeft: '10px', fontSize: 'smaller'}}>[44.117, -126.123] [44.117, -114.346]</span><br />
         <span style={{paddingLeft: '10px', fontSize: 'smaller'}}>[31.383, -126.123] [31.383, -114.346]</span><br />
       </p>
 
       {/* Circle Controls */}
       <div style={{marginBottom: '2rem'}}>
-        <b>Map</b> <br />
+        <span  className='control-panel-section-heading'>Map</span> <br />
         <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
           <div
             style={{
@@ -140,7 +140,7 @@ const ControlPanel = ({
               step={0.1}
             />
           </div>
-          <div><b>Intensity</b></div>
+          <div><span  className='control-panel-section-heading'>Intensity</span></div>
           <div
               style={{
                 display: 'flex',
@@ -168,7 +168,7 @@ const ControlPanel = ({
             </div>
         </div>
         <div>
-          <b>Depth</b>
+          <span  className='control-panel-section-heading'>Depth</span>
         </div>
         <div
             style={{
@@ -198,7 +198,7 @@ const ControlPanel = ({
         </div>
         <div style={{
             paddingTop: '10px'}}>
-          <b>Date Range (GMT)</b>
+          <span className='control-panel-section-heading'>Date Range (GMT)</span>
         </div>
 
         <div
@@ -261,7 +261,7 @@ const ControlPanel = ({
         </div>
         <div style={{
             paddingTop: '10px'}}>
-          <b>Animation</b>
+          <span  className='control-panel-section-heading'>Animation</span>
         </div>
         
           <div

@@ -13,10 +13,10 @@ export const StyledAnimationMonitor = styled.button<StyledAnimationMonitorCompon
   justify-content: space-around;
   width: 12rem;
   height: 4rem;
-  background: transparent;
+  background: #0f0f0f;
   border-style: solid;
   border-radius: 8px;
-  border-color: ${({ automationStatus }) => automationStatus==='idle' ? "gray" : "green"};
+  border-color: ${({ automationStatus }) => automationStatus==='idle' ? "#202020" : "#34754B"};
   border-width: medium;
 
   cursor: default;
@@ -30,8 +30,8 @@ export const StyledAnimationMonitor = styled.button<StyledAnimationMonitorCompon
     width: 100%;
     height: 0.10rem;
     font-weight: bold;
-    background-color: transparent;
-    color:  ${({ automationStatus }) => automationStatus==='idle' ? "gray" : "green"}; 
+    background-color: #0f0f0f;
+    color:  ${({ automationStatus }) => automationStatus==='idle' ? "#202020" : "#567E21"}; 
   }
   :nth-child(2){
     display: ${({ automationStatus }) => automationStatus==='idle' ? "block" : "none"}; 
@@ -39,8 +39,8 @@ export const StyledAnimationMonitor = styled.button<StyledAnimationMonitorCompon
     top: 20px;
     width: 100%;
     height: 0.10rem;
-    background-color: transparent;
-    color:  ${({ automationStatus }) => automationStatus==='idle' ? "gray" : "transparent"}; 
+    background-color: #0f0f0f;
+    color:  ${({ automationStatus }) => automationStatus==='idle' ? "#202020" : "transparent"}; 
   }
   :nth-child(3){
     position: absolute;
@@ -48,8 +48,8 @@ export const StyledAnimationMonitor = styled.button<StyledAnimationMonitorCompon
     top: 20px;
     width: 100%;
     height: 0.10rem;
-    background-color: transparent;
-    color:  ${({ automationStatus }) => automationStatus==='idle' ? "transparent" : "green"}; 
+    background-color: #0f0f0f;
+    color:  ${({ automationStatus }) => automationStatus==='idle' ? "transparent" : "#567E21"}; 
   }
   :nth-child(4){
     position: absolute;
@@ -57,7 +57,11 @@ export const StyledAnimationMonitor = styled.button<StyledAnimationMonitorCompon
     top: 38px;
     width: 100%;
     height: 0.10rem;
-    background-color: transparent;
-    color:  ${({ automationStatus }) => automationStatus==='idle' ? "transparent" : "green"}; 
+    background-color: #0f0f0f;
+    color:  ${({ automationStatus }) => automationStatus==='idle' ? "transparent" : "#567E21"}; 
+  }
+
+  svg {
+    stroke: #567E21;
   }
 `;

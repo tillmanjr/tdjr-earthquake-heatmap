@@ -3,14 +3,10 @@ import PropTypes from 'prop-types'
 import { StyledAnimationMonitor } from './AnimationMonitor.styled'
 
 const AnimationMonitor = ({ automationStatus, automationType, automationTotalSteps, automationCurrentStep, dateMin, dateMax, ...props }) => {
-  
-  //const isExpanded = open ? true : false;
   const animationTypeText = automationStatus === 'idle' ? '' : ` (${automationType})`
   return (
     <StyledAnimationMonitor
         automationStatus={automationStatus}
-        // open={open}
-        // onClick={() => setOpen(!open)}
         {...props}
     >
       <div> Animation{animationTypeText}</div>
