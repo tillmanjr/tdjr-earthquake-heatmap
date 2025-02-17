@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Children } from 'react';
 import { bool } from 'prop-types';
 import { StyledMenu } from './Menu.styled'
 

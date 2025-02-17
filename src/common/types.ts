@@ -18,3 +18,5 @@ export type EarthquakeFilterProps = {
   };
 
 export type EarthquakesGeojson = FeatureCollection<Point, EarthquakeProps>;
+
+export type RoundingMethod = "floor" | "ceiling" | "round";

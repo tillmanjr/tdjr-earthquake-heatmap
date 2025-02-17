@@ -8,7 +8,7 @@ import { loadEarthquakeGeojson } from '../../data/earthquakes';
 import { useOnClickOutside } from '../../hooks'
 import { ThemeProvider } from 'styled-components';
 import { GlobalStyles } from '../../global'
-import { Burger, Menu } from '../../components'
+import { AnimationMonitor, Burger, Menu } from '../../components'
 
 import { theme } from '../../theme'
 
@@ -20,6 +20,9 @@ import Heatmap from '../../components/heatmap/Heatmap'
 import { applyFilter } from '../../common/geoFilters'
 
 import { useInterval } from '../../hooks/UseInterval';
+
+import {addDays} from '../../common/dayFunctions'
+import {calculateAnimationStepCount} from '../../common/animationFunctions'
 
 const dataDateMin: Date = new Date('2019-01-01T00:00:01');
 const dataDateMax: Date = new Date('2025-01-01T00:00:00');
@@ -42,6 +45,10 @@ export function HeatmapView() {
     const [automationType, setAutomationType] = useState('interval')
     const [automationStepBy, setAutomationStepBy] = useState(1)
     const [automationWindow, setAutomationWindow] = useState(7)
+
+    const [automationTotalSteps, setAutomationTotalSteps] = useState(0)
+    const [automationCurrentStep, setAutomationCurrentStep] = useState(0)
+    
     const [radius, setRadius] = useState(8);
     const [opacity, setOpacity] = useState(0.8);
     //  The format is "yyyy-MM-ddThh:mm" followed by optional ":ss" or ":ss.SSS"
@@ -123,22 +130,18 @@ export function HeatmapView() {
     }
 
     function showNextInterval(stepByDays: number, windowDays: number) {
-        let newDateMin = new Date(dateMin)
-        newDateMin.setDate(newDateMin.getDate() + stepByDays)
+        let newDateMin = addDays(dateMin, stepByDays)
+        let newDateMax = addDays(dateMin, stepByDays + windowDays)
 
-        let newDateMax = new Date(dateMin)
-        newDateMax.setDate(newDateMax.getDate() + stepByDays + windowDays);
-
-        console.log('showNextInterval', dateMin, dateMax, newDateMin, newDateMax)
         setDateMin(newDateMin);
         setDateMax(newDateMax);
+        setAutomationCurrentStep(automationCurrentStep + 1)
     }
 
     function showNextAccumulation(stepByDays: number) {
-        let newDateMax = new Date(dateMax)
-        newDateMax.setDate(newDateMax.getDate() + stepByDays);
-
+        let newDateMax = addDays(dateMax, stepByDays)
         setDateMax(newDateMax);
+        setAutomationCurrentStep(automationCurrentStep + 1)
     }
 
     useInterval(
@@ -154,13 +157,42 @@ export function HeatmapView() {
         automationStatus === 'running' ? 1000 : null
     )
 
-    function handleToggleAutomation() {
+    function startAnimation() {
+        const steps = calculateAnimationStepCount({
+            animationType: (automationType === 'interval' ? 'interval' : 'accumulation'),
+            startDate: (automationType === 'interval' ? dateMin : dateMax),
+            stopDate: dataDateMax,
+            stepBy: automationStepBy,
+            windowSize: automationWindow 
+        })
+        setAutomationTotalSteps(steps)
         if (automationType === 'interval') {
             showNextInterval(automationStepBy, automationWindow);
         } else {
             showNextAccumulation(automationStepBy);
         }
-        setAutomationStatus((automationStatus) => (automationStatus === 'running' ? 'idle' : 'running'))
+        setAutomationStatus('running')
+    }
+
+    function stopAnimation() {
+        setAutomationTotalSteps(0)
+        setAutomationCurrentStep(0)
+        setAutomationStatus('idle')
+    }
+
+    function handleToggleAutomation() {
+        if (automationStatus === 'idle') {
+            startAnimation()
+        }
+        if (automationStatus === 'running') {
+            stopAnimation();
+        }
+        // if (automationType === 'interval') {
+        //     showNextInterval(automationStepBy, automationWindow);
+        // } else {
+        //     showNextAccumulation(automationStepBy);
+        // }
+        // setAutomationStatus((automationStatus) => (automationStatus === 'running' ? 'idle' : 'running'))
     }
 
     function handleShowNextAccumulationEvent() {
@@ -179,6 +211,14 @@ export function HeatmapView() {
                     <div ref={node}>
                         <FocusLock disabled={!open}>
                             <Burger open={open} setOpen={setOpen} aria-controls={menuId} />
+                            <AnimationMonitor  
+                                automationStatus={automationStatus}
+                                automationType={automationType}
+                                automationTotalSteps={automationTotalSteps}
+                                automationCurrentStep={automationCurrentStep}
+                                dateMin={dateMin}
+                                dateMax={dateMax}
+                            />
                             <Menu open={open} setOpen={setOpen} id={menuId} >
                                 <ControlPanel
                                     radius={radius}
