@@ -20,6 +20,13 @@ export const StyledBurger = styled.button<StyledBurgerComponentProps>`
   padding: 0;
   z-index: 102;
 
+  :hover {
+    background-color: black;
+  }
+    :focus {
+    background-color: black;
+  }
+
   span {
     width: 2rem;
     height: 0.25rem;
