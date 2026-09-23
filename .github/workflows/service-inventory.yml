@@ -44,7 +44,7 @@ on:
       retention_target:
         description: 'Asset count the release is pruned back to. Below the hard cap of 1000.'
         type: string
-        default: '950'
+        default: '12'
       enable_analysis:
         description: 'Add the model pass. Off by default: a run is deterministic and needs no key'
         type: boolean
