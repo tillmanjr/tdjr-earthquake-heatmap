@@ -4,7 +4,7 @@ name: Service Inventory
 # GENERATED FILE — do not edit by hand.
 #
 # Produced by `tools/build_workflow.py` in sovatohealth/svh-service-inventory.
-#   source revision : 38754f5
+#   source revision : b0d5c91
 #   payload sha256  : 7c73e7c507e13f6de8be37b2bd4a99358e09252273c4587982e26d8519675f86
 #   payload size    : 699 lines of base64
 #
@@ -987,7 +987,7 @@ jobs:
         run: |
           printf '{"repo":"%s","sha":"%s","ref":"%s","runId":"%s","builtAt":"%s","toolingRef":"%s","deployables":%s}\n' \
             "$GITHUB_REPOSITORY" "$GITHUB_SHA" "$GITHUB_REF_NAME" "$GITHUB_RUN_ID" \
-            "$(date -u +%Y-%m-%dT%H:%M:%SZ)" '38754f5' \
+            "$(date -u +%Y-%m-%dT%H:%M:%SZ)" 'b0d5c91' \
             "$DEPLOYABLES_JSON" > "$OUT/publish/meta.json"
 
       # SPEC.md D1-D11. One current release holding the rolling inventory, and a sequence of
@@ -1134,45 +1134,52 @@ jobs:
                  "current inventory pointing at the head"
           fi
 
-          # D6 — archive releases are appended to, never pruned, so the sequence only ever grows.
-          # Take the highest-numbered; roll over when this commit's members will not fit. A
-          # commit's members always land on ONE release: a commit split across two is a record
-          # that cannot be read back whole.
-          ARCHIVE_COUNT=$(find "$OUT/archive" -type f | wc -l | tr -d ' ')
-          SEQ=$(gh release list --limit 1000 --json tagName --jq \
-                  ".[] | .tagName | select(startswith(\"$TAG-archive-\"))" 2>/dev/null \
-                | sed "s/^$TAG-archive-//" | grep -E '^[0-9]{4}$' | sort -n | tail -1 || true)
-          [ -n "$SEQ" ] || SEQ=0
-          NEXT=$(printf '%04d' "$((10#$SEQ + 1))")
-          if [ "$SEQ" = "0" ]; then
-            ARCHIVE_TAG="$TAG-archive-$NEXT"
-            claim "$ARCHIVE_TAG" "Service inventory archive $NEXT"
-          else
-            ARCHIVE_TAG="$TAG-archive-$(printf '%04d' "$((10#$SEQ))")"
-            claim "$ARCHIVE_TAG" "Service inventory archive $SEQ"
-            HELD=$(gh release view "$ARCHIVE_TAG" --json assets --jq '.assets | length')
-            if [ "$((HELD + ARCHIVE_COUNT))" -gt "$ARCHIVE_SIZE" ]; then
-              ARCHIVE_TAG="$TAG-archive-$NEXT"
-              echo "::notice::$ARCHIVE_SIZE reached; starting $ARCHIVE_TAG"
-              claim "$ARCHIVE_TAG" "Service inventory archive $NEXT"
+          # D6 — a commit is recorded ONCE. The archive is immutable, so before choosing where to
+          # write, ask whether this commit is already recorded anywhere in the sequence. Checking
+          # only the release picked after a rollover wrote the same commit to two releases: a
+          # re-run found the latest release full, started the next, found it empty, and duplicated
+          # the record it already had.
+          ARCHIVE_TAGS=$(gh release list --limit 1000 --json tagName --jq '.[].tagName' \
+                         2>/dev/null | grep "^$TAG-archive-" | sort || true)
+          RECORDED=""
+          # Unquoted on purpose: the tags are newline-separated and match [A-Za-z0-9._-], so
+          # word-splitting them is the intent.
+          # shellcheck disable=SC2086
+          for T in $ARCHIVE_TAGS; do
+            if gh release view "$T" --json assets --jq '.assets[].name' 2>/dev/null \
+               | grep -q "^archive-$GITHUB_SHA-"; then
+              RECORDED="$T"
+              break
             fi
-          fi
-
-          # D8 — append what is not recorded yet. An archive member already present is immutable
-          # and is never re-uploaded (I2).
-          gh release view "$ARCHIVE_TAG" --json assets --jq '.assets[].name' \
-            > "$OUT/archived-names.txt"
-          UPLOAD=()
-          for f in "$OUT"/archive/*; do
-            [ -e "$f" ] || continue
-            grep -qxF "$(basename "$f")" "$OUT/archived-names.txt" && continue
-            UPLOAD+=("$f")
           done
-          if [ ${#UPLOAD[@]} -eq 0 ]; then
-            echo "::notice::archive-$GITHUB_SHA-* is already recorded on $ARCHIVE_TAG"
+
+          if [ -n "$RECORDED" ]; then
+            echo "::notice::archive-$GITHUB_SHA-* is already recorded on $RECORDED;" \
+                 "the archive is immutable, so this run adds nothing to it"
           else
-            gh release upload "$ARCHIVE_TAG" ${UPLOAD[@]+"${UPLOAD[@]}"}
-            echo "::notice::recorded ${#UPLOAD[@]} archive file(s) for $GITHUB_SHA on $ARCHIVE_TAG"
+            # Append to the highest-numbered release, starting the next when this commit's members
+            # will not fit. A commit's members always land on ONE release: a commit split across
+            # two is a record that cannot be read back whole.
+            ARCHIVE_COUNT=$(find "$OUT/archive" -type f | wc -l | tr -d ' ')
+            SEQ=$(echo "$ARCHIVE_TAGS" | sed "s/^$TAG-archive-//" \
+                  | grep -E '^[0-9]{4}$' | sort -n | tail -1 || true)
+            [ -n "$SEQ" ] || SEQ=0
+            NEXT=$(printf '%04d' "$((10#$SEQ + 1))")
+            if [ "$SEQ" = "0" ]; then
+              ARCHIVE_TAG="$TAG-archive-$NEXT"
+              claim "$ARCHIVE_TAG" "Service inventory archive $NEXT"
+            else
+              ARCHIVE_TAG="$TAG-archive-$(printf '%04d' "$((10#$SEQ))")"
+              claim "$ARCHIVE_TAG" "Service inventory archive $SEQ"
+              HELD=$(gh release view "$ARCHIVE_TAG" --json assets --jq '.assets | length')
+              if [ "$((HELD + ARCHIVE_COUNT))" -gt "$ARCHIVE_SIZE" ]; then
+                ARCHIVE_TAG="$TAG-archive-$NEXT"
+                echo "::notice::$ARCHIVE_TAG started; $ARCHIVE_SIZE reached on the previous one"
+                claim "$ARCHIVE_TAG" "Service inventory archive $NEXT"
+              fi
+            fi
+            gh release upload "$ARCHIVE_TAG" "$OUT"/archive/*
+            echo "::notice::recorded $ARCHIVE_COUNT archive file(s) for $GITHUB_SHA on $ARCHIVE_TAG"
           fi
 
           # D9, D10 — a deployable that did not render produced no files and was never in the
