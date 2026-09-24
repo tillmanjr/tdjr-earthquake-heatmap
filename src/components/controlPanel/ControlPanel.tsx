@@ -26,7 +26,7 @@ const Dropdown = ({ options, onSelect, value }) => {
     return (
       <div className="dropdown">
         <button onClick={handleToggle}>
-          {selectedValue || 'Select an option'}
+          {selectedValue || 'Select one option'}
         </button>
         {isOpen && (
           <ul className="dropdown-menu">
