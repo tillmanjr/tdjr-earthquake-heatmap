@@ -84,7 +84,7 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       TAG: service-inventory
       PLATFORM_IN: ${{ github.event.inputs.platform || 'auto' }}
-      ARCHIVE_SIZE: ${{ github.event.inputs.archive_release_size || '900' }}
+      ARCHIVE_SIZE: ${{ github.event.inputs.archive_release_size || '6' }}
       ANALYSIS: ${{ github.event.inputs.enable_analysis || 'false' }}
       TASK_TIMEOUT: ${{ github.event.inputs.task_timeout || '180' }}
     steps:
