@@ -1012,7 +1012,12 @@ jobs:
             # $1 = tag, $2 = title. Exits 78 if the release exists and is not ours.
             local BODY
             if BODY=$(gh release view "$1" --json body --jq .body 2>/dev/null); then
-              printf '%s\n' "$BODY" | tr -d '\r' > "$OUT/body.txt"
+              # Strip the carriage returns a web-UI edit leaves, and the leading and trailing
+              # whitespace a human typing into that textarea leaves with them. The marker must
+              # still be a line of its own -- not text embedded in a sentence -- but requiring it
+              # to be byte-exact rejects the very edit D1 offers as the remedy for exit 78.
+              printf '%s\n' "$BODY" | tr -d '\r' \
+                | sed 's/^[[:space:]]*//; s/[[:space:]]*$//' > "$OUT/body.txt"
               if ! grep -qxF "$MARKER" "$OUT/body.txt"; then
                 echo "::error::NOTHING WAS CHANGED — release $1 was not created by this workflow," \
                      "so it was left completely alone: nothing read, nothing written, nothing" \
